@@ -1,0 +1,30 @@
+{
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "@types/node": "^18.15.11",
+    "@types/pg": "^8.6.6",
+    "typescript": "^5.0.3"
+  },
+  "scripts": {
+    "start:dev": "nodemon ./src/index.ts",
+    "start:prod": "node ./dist/index.js"
+  },
+  "dependencies": {
+    "@telegraf/session": "^2.0.0-beta.6",
+    "axios": "^1.3.5",
+    "dotenv": "^16.0.3",
+    "ffmpeg-static": "^5.1.0",
+    "ffprobe-static": "^3.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "fuse.js": "^6.6.2",
+    "into-stream": "^6.0.0",
+    "kysely": "^0.23.5",
+    "node-fetch": "^3.3.1",
+    "nodemon": "^2.0.22",
+    "pg": "^8.10.0",
+    "telegraf": "^4.12.2",
+    "ts-node": "^10.9.1",
+    "typeorm": "^0.3.13",
+    "winston": "^3.8.2"
+  }
+}
