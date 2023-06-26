@@ -2,6 +2,7 @@ import { Scenes } from "telegraf";
 import { KeyboardContext } from "../../interfaces/Keyboard";
 import { stickersKeyboard } from "../../keyboards/stickersKeyboard";
 import { Sticker } from "../../entities/Sticker";
+import { logger } from "../../winston";
 
 export const KeyboardStickerScene = new Scenes.BaseScene<KeyboardContext>("KeyboardSticker");
 
@@ -36,7 +37,9 @@ KeyboardStickerScene.on("callback_query", async(ctx: KeyboardContext) => {
         ctx.scene.state.stickers.forEach(async(sticker) => {
           await ctx.telegram.deleteMessage(sticker.chat.id, sticker.message_id);
         });
-      } catch {}
+      } catch(error) {
+        logger.error(error.message);
+      }
 
       ctx.scene.state.stickers = [];
 

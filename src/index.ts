@@ -20,6 +20,7 @@ import { cancel } from "./middlewares/cancel";
 import { KeyboardAuthorScene } from "./scenes/Keyboard/AuthorScene";
 import { KeyboardCategoryScene } from "./scenes/Keyboard/CategoryScene";
 import { KeyboardStickerScene } from "./scenes/Keyboard/StickerScene";
+import { APIGatewayEvent, APIGatewayProxyResultV2, Handler } from "aws-lambda";
 
 dotenv.config();
 
@@ -78,10 +79,20 @@ bot.use(admin.composer);
 bot.use(user.composer);
 bot.use(group.composer);
 
-bot.launch({
-  dropPendingUpdates: true,
-});
+export const handler: Handler = async(event: APIGatewayEvent): Promise<APIGatewayProxyResultV2> => {
+  await bot.handleUpdate(JSON.parse(event.body!));
 
+  return {
+    statusCode: 200,
+    body: ""
+  };
+}
+
+if(process.env.SERVER == "dev") {
+  bot.launch({
+    dropPendingUpdates: true
+  });
+}
 
 //enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));

@@ -2,18 +2,23 @@ import { Scenes } from "telegraf";
 import { KeyboardContext } from "../../interfaces/Keyboard";
 import { categoriesKeyboard } from "../../keyboards/categoriesKeyboard";
 import { Category } from "../../entities/Category";
+import { logger } from "../../winston";
 
 export const KeyboardCategoryScene = new Scenes.BaseScene<KeyboardContext>("KeyboardCategory");
 
 KeyboardCategoryScene.enter(async(ctx: KeyboardContext) => {
-  if(!ctx.scene.state.message) {
-    ctx.scene.state.message = await ctx.reply("Выбери категорию:", {
-      reply_markup: await categoriesKeyboard(ctx)
-    });
-  } else {
-    await ctx.editMessageText("Выбери автора:", {
-      reply_markup: await categoriesKeyboard(ctx)
-    });
+  try {
+    if(!ctx.scene.state.message) {
+      ctx.scene.state.message = await ctx.reply("Выбери категорию:", {
+        reply_markup: await categoriesKeyboard(ctx)
+      });
+    } else {
+      await ctx.editMessageText("Выбери автора:", {
+        reply_markup: await categoriesKeyboard(ctx)
+      });
+    }
+  } catch (error) {
+    logger.error(error.message);
   }
 });
 
