@@ -20,6 +20,7 @@ export async function createSticker(ctx: CreateStickerContext) {
     let fileSize: number;
 
     const vid = new Video(video);
+    await vid.downloadVideo();
 
     if(sticker.type == "video") {
       videoPath = await vid.compress();

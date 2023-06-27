@@ -29,14 +29,19 @@ try {
     `${process.env.STORAGE_PATH}/voices/` as Path,
     `${process.env.STORAGE_PATH}/videos/` as Path,
   ];
-  dirs.forEach(dir => {
-    fs.mkdirSync(
-      path.join(__dirname, dir), 
-      {recursive: true}
-    );
 
-    fs.chmodSync(dir, 0o777);
-  })
+  fs.mkdirSync(
+    path.join(__dirname, dirs[0]), 
+    {recursive: true}
+  );
+
+  fs.mkdirSync(
+    path.join(__dirname, dirs[1]), 
+    {recursive: true}
+  );
+
+  fs.chmodSync(dirs[0], 0o777);
+  fs.chmodSync(dirs[1], 0o777);
 } catch {}
 
 const bot = new Telegraf(process.env.BOT_TOKEN!);

@@ -5,6 +5,8 @@ import { Path } from 'typescript';
 import { promises as fs } from 'fs';
 import { File } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../winston';
+import axios from 'axios';
+import fsSync from 'fs';
 
 ffmpeg.setFfmpegPath(ffmpegStatic);
 ffmpeg.setFfprobePath(ffprobeStatic.path);
@@ -13,11 +15,12 @@ ffmpeg.setFfprobePath(ffprobeStatic.path);
 export class Video {
   private readonly video: File;
   private filePath: Path;
+  private downloadedFilePath: Path;
   private cropOptions: string;
 
   private async getOrientation() {
     return new Promise((resolve, reject) => {
-      ffmpeg.ffprobe(this.video.file_path, (err, metadata) => {
+      ffmpeg.ffprobe(this.downloadedFilePath, (err, metadata) => {
         if (err) reject(err);
 
         const videoStream = metadata.streams.find((stream: any) => stream.codec_type === "video");
@@ -47,7 +50,7 @@ export class Video {
     await this.getOrientation();
 
     return new Promise(async(resolve, reject) => {
-      ffmpeg(this.video.file_path)
+      ffmpeg(this.downloadedFilePath)
         .outputFps(30)
         .setDuration("1:00")
         .videoFilters([
@@ -70,11 +73,30 @@ export class Video {
     });
   }
 
+  public async downloadVideo(): Promise<Path> {
+    this.downloadedFilePath = `./src/storage/${this.video.file_path}` as Path;
+
+    const response = await axios({
+      url: `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${this.video.file_path}`,
+      method: "GET",
+      responseType: "stream"
+    });
+
+    const writer = fsSync.createWriteStream(this.downloadedFilePath);
+
+    response.data.pipe(writer);
+
+    return new Promise((resolve, reject) => {
+      writer.on("finish", resolve);
+      writer.on("error", reject);
+    })
+  }
+
   public async toVoice(): Promise<Path> {
     this.filePath = `./src/storage/voices/${this.video.file_unique_id}.ogg` as Path;
 
     return new Promise(async(resolve, reject) => {
-      ffmpeg(this.video.file_path) 
+      ffmpeg(this.downloadedFilePath) 
         .audioCodec("libopus")
         .audioBitrate("32")
         .toFormat("ogg")
@@ -97,7 +119,7 @@ export class Video {
 
   public async delete() {
     try {
-      await fs.rm(this.video.file_path);
+      await fs.rm(this.downloadedFilePath);
       await fs.rm(this.filePath);
     } catch (err) {
       logger.error(err);
