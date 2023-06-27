@@ -39,11 +39,7 @@ try {
   })
 } catch {}
 
-const bot = new Telegraf(process.env.BOT_TOKEN!, { 
-  telegram: {
-    apiRoot: `http://${process.env.API_HOST}:8081`,
-  }
-});
+const bot = new Telegraf(process.env.BOT_TOKEN!);
 
 const stage = new Scenes.Stage<CreateStickerContext | KeyboardContext>([
   CreateTypeScene,
