@@ -10,11 +10,11 @@ export const logger = createLogger({
   )
 });
 
-if (process.env.SERVER === "dev") {
+if (process.env.LOGGING == "true") {
   logger.add(new transports.Console({
     level: "info"
   }));
-} else if (process.env.SERVER === "prod") {
+} else if (process.env.LOGGING == "false") {
   logger.add(new transports.File({
     filename: "logs/errors.log",
     level: "error",
