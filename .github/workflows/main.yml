@@ -28,5 +28,6 @@ jobs:
         run: |
           curl https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/setWebhook?url=${{ secrets.WEBHOOK_URL }}          
           npx ncc build ./src/index.ts 
+          cp ./binaries/ffmpeg ./dist/ffmpeg
           zip -j deploy.zip ./dist/*
           aws lambda update-function-code --function-name=Audiostick --zip-file=fileb://deploy.zip

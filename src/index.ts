@@ -14,7 +14,6 @@ import { CreateNameScene } from "./scenes/CreateSticker/NameScene";
 import { CreateAuthorScene} from "./scenes/CreateSticker/AuthorScene";
 import { CreateCategoryScene } from "./scenes/CreateSticker/CategoryScene";
 import * as fs from "fs";
-import path from "path";
 import { Path } from "typescript";
 import { cancel } from "./middlewares/cancel";
 import { KeyboardAuthorScene } from "./scenes/Keyboard/AuthorScene";
@@ -31,12 +30,12 @@ try {
   ];
 
   fs.mkdirSync(
-    path.join(__dirname, dirs[0]), 
+    dirs[0],
     {recursive: true}
   );
 
   fs.mkdirSync(
-    path.join(__dirname, dirs[1]), 
+    dirs[1],
     {recursive: true}
   );
 

@@ -11,7 +11,6 @@ import fsSync from 'fs';
 ffmpeg.setFfmpegPath(ffmpegStatic);
 ffmpeg.setFfprobePath(ffprobeStatic.path);
 
-
 export class Video {
   private readonly video: File;
   private filePath: Path;
@@ -45,7 +44,7 @@ export class Video {
 
   public async compress(): Promise<Path> {
     this.filePath = 
-      `./src/storage/videos/${this.video.file_unique_id}.mp4` as Path;
+      `${process.env.STORAGE_PATH}/videos/${this.video.file_unique_id}.mp4` as Path;
 
     await this.getOrientation();
 
@@ -74,7 +73,7 @@ export class Video {
   }
 
   public async downloadVideo(): Promise<Path> {
-    this.downloadedFilePath = `./src/storage/${this.video.file_path}` as Path;
+    this.downloadedFilePath = `${process.env.STORAGE_PATH}/${this.video.file_path}` as Path;
 
     const response = await axios({
       url: `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${this.video.file_path}`,
@@ -93,7 +92,7 @@ export class Video {
   }
 
   public async toVoice(): Promise<Path> {
-    this.filePath = `./src/storage/voices/${this.video.file_unique_id}.ogg` as Path;
+    this.filePath = `${process.env.STORAGE_PATH}/voices/${this.video.file_unique_id}.ogg` as Path;
 
     return new Promise(async(resolve, reject) => {
       ffmpeg(this.downloadedFilePath) 
