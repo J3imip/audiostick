@@ -1,6 +1,4 @@
 import ffmpeg from 'fluent-ffmpeg';
-import ffmpegStatic from 'ffmpeg-static';
-import ffprobeStatic from 'ffprobe-static';
 import { Path } from 'typescript';
 import { promises as fs } from 'fs';
 import { File } from 'telegraf/typings/core/types/typegram';
@@ -8,8 +6,8 @@ import { logger } from '../winston';
 import axios from 'axios';
 import fsSync from 'fs';
 
-ffmpeg.setFfmpegPath(ffmpegStatic);
-ffmpeg.setFfprobePath(ffprobeStatic.path);
+ffmpeg.setFfmpegPath("./binaries/ffmpeg");
+ffmpeg.setFfprobePath("../binaries/ffprobe");
 
 export class Video {
   private readonly video: File;
