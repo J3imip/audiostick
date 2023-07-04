@@ -4,3 +4,4 @@ logs/
 .env
 .bot/
 dumps/
+tmp/
