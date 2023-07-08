@@ -1,9 +1,10 @@
 import ffmpeg from 'fluent-ffmpeg';
-import ffmpegStatic from 'ffmpeg-static';
 import { File } from "telegraf/typings/core/types/typegram";
 import { Path } from 'typescript';
 import { promises as fs } from 'fs';
-ffmpeg.setFfmpegPath(ffmpegStatic)
+import ffmpegStatic from '@ffmpeg-installer/ffmpeg';
+
+ffmpeg.setFfmpegPath(ffmpegStatic.path)
 
 export default async function(
   video: File
