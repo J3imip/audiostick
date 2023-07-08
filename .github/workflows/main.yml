@@ -29,6 +29,5 @@ jobs:
           curl https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/setWebhook?url=${{ secrets.WEBHOOK_URL }}          
           npx ncc build ./src/index.ts -m
           cp ./binaries ./dist -r
-          cd ./dist
-          zip -r deploy.zip ./
+          zip -j deploy.zip ./dist/*
           aws lambda update-function-code --function-name=Audiostick --zip-file=fileb://deploy.zip
