@@ -81,6 +81,6 @@ export async function createSticker(ctx: CreateStickerContext) {
     await ctx.deleteMessage(message.message_id);
     await ctx.scene.leave();
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
   }
 }
