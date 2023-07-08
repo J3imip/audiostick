@@ -5,9 +5,11 @@ import { File } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../winston';
 import axios from 'axios';
 import fsSync from 'fs';
+import ffmpegPath from 'ffmpeg-static';
+import ffprobe from 'ffprobe-static';
 
-ffmpeg.setFfmpegPath("./binaries/ffmpeg");
-ffmpeg.setFfprobePath("../binaries/ffprobe");
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobe.path);
 
 export class Video {
   private readonly video: File;
