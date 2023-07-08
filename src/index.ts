@@ -88,7 +88,7 @@ export const handler: Handler = async(event: APIGatewayEvent): Promise<APIGatewa
   };
 }
 
-if(process.env.SERVER == "dev") {
+if(process.env.LOCAL == "true") {
   bot.launch({
     dropPendingUpdates: true
   });

@@ -2,7 +2,7 @@ import { Scenes } from "telegraf";
 import { CreateStickerContext } from "../../interfaces/CreateSticker";
 import { message } from "telegraf/filters";
 import { Category } from "../../entities/Category";
-import { createSticker } from "../../utils/createStikcer";
+import { createSticker } from "../../utils/createSticker";
 import { Author } from "../../entities/Author";
 
 export const CreateCategoryScene = new Scenes.BaseScene<CreateStickerContext>("CreateCategory");
