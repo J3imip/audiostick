@@ -30,5 +30,5 @@ jobs:
           npx ncc build ./src/index.ts -m
           cp ./binaries ./dist -r
           cd ./dist
-          zip -r deploy.zip ./dist/*
+          zip -r deploy.zip ./
           aws lambda update-function-code --function-name=Audiostick --zip-file=fileb://deploy.zip
