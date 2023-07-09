@@ -9,7 +9,7 @@ interface CreateSession extends Scenes.SceneSession {
   user: User;
 }
 
-export interface CreateStickerContext extends Context {
+export interface EditStickerContext extends Context {
 	session: CreateSession;
 	scene: Scenes.SceneContextScene<CreateStickerContext, Scenes.SceneSessionData> & {
     state: {

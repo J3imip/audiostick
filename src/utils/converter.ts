@@ -1,25 +1,17 @@
 import ffmpeg from 'fluent-ffmpeg';
-import { Path } from 'typescript';
-import { promises as fs } from 'fs';
 import { File } from 'telegraf/typings/core/types/typegram';
-import { logger } from '../winston';
-import axios from 'axios';
-import fsSync from 'fs';
-import ffprobeStatic from 'ffprobe-static';
-import ffmpegStatic from '@ffmpeg-installer/ffmpeg';
-
-ffmpeg.setFfmpegPath(ffmpegStatic.path);
-ffmpeg.setFfprobePath(ffprobeStatic.path);
+import { PassThrough } from 'stream';
 
 export class Video {
-  private readonly video: File;
-  private filePath: Path;
-  private downloadedFilePath: Path;
+  private readonly videoUrl: string;
   private cropOptions: string;
+  private videoOrVoicePt: PassThrough;
+  private videoOrVoiceBuffer: Buffer;
+  private isStick: boolean;
 
   private async getOrientation() {
     return new Promise((resolve, reject) => {
-      ffmpeg.ffprobe(this.downloadedFilePath, (err, metadata) => {
+      ffmpeg.ffprobe(this.videoUrl, (err, metadata) => {
         if (err) reject(err);
 
         const videoStream = metadata.streams.find((stream: any) => stream.codec_type === "video");
@@ -42,16 +34,15 @@ export class Video {
     });
   }
 
-  public async compress(): Promise<Path> {
-    this.filePath = 
-      `${process.env.STORAGE_PATH}/videos/${this.video.file_unique_id}.mp4` as Path;
-
+  public async compress(): Promise<Buffer> {
     await this.getOrientation();
 
     return new Promise(async(resolve, reject) => {
-      ffmpeg(this.downloadedFilePath)
+      ffmpeg(this.videoUrl)
+        .toFormat("mp4")
         .outputFps(30)
         .setDuration("1:00")
+        .outputOptions('-movflags frag_keyframe+empty_moov')
         .videoFilters([
           {
             filter: "crop",
@@ -60,68 +51,51 @@ export class Video {
           {
             filter: "scale",
             options: "640:640",
-          },
+          }
         ])
-        .on("end", () => {
-          resolve(this.filePath);
-        })
-        .on("err", (err) => {
-          reject(err);
-        })
-        .save(this.filePath);
+        .on("end", () => resolve(this.videoOrVoiceBuffer))
+        .on("error", (err) => reject(err))
+        .pipe(this.videoOrVoicePt, { end: true });
+
+      this.videoOrVoiceBuffer = await this.passThroughToBuffer();
     });
   }
 
-  public async downloadVideo(): Promise<Path> {
-    this.downloadedFilePath = `${process.env.STORAGE_PATH}/${this.video.file_path}` as Path;
-
-    const response = await axios({
-      url: `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${this.video.file_path}`,
-      method: "GET",
-      responseType: "stream"
-    });
-
-    const writer = fsSync.createWriteStream(this.downloadedFilePath);
-
-    response.data.pipe(writer);
-
-    return new Promise((resolve, reject) => {
-      writer.on("finish", resolve);
-      writer.on("error", reject);
-    })
-  }
-
-  public async toVoice(): Promise<Path> {
-    this.filePath = `${process.env.STORAGE_PATH}/voices/${this.video.file_unique_id}.ogg` as Path;
-
+  public async toVoice(): Promise<PassThrough> {
     return new Promise(async(resolve, reject) => {
-      ffmpeg(this.downloadedFilePath) 
-        .audioCodec("libopus")
+      ffmpeg(this.videoUrl) 
+        .audioCodec(this.isStick ? "libopus" : "vorbis")
         .audioBitrate("32")
         .toFormat("ogg")
-        .output(this.filePath)
         .size('0x0')
         .noVideo()
-        .on('end', async() => {
-          resolve(this.filePath);
-        })
-        .on("err", err => {
-          reject(err);
-        })
-        .run();
+        .on('end', () => resolve(this.videoOrVoicePt))
+        .on("error", err => reject(err))
+        .pipe(this.videoOrVoicePt, { end: true });
     })
   }
 
-  public constructor(video: File) {
-    this.video = video;
+  private async passThroughToBuffer(): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks = [];
+      this.videoOrVoicePt.on('data', chunk => {
+        chunks.push(chunk);
+      });
+
+      this.videoOrVoicePt.on('error', error => {
+        reject(error);
+      });
+
+      this.videoOrVoicePt.on('end', () => {
+        const buffer = Buffer.concat(chunks);
+        resolve(buffer);
+      });
+    });
   }
 
-  public async delete() {
-    try {
-      await fs.rm(this.downloadedFilePath);
-      await fs.rm(this.filePath);
-    } catch (err) {
-      logger.error(err);
-    }
+  public constructor(video: File, isStick: boolean = false) {
+    this.videoOrVoicePt = new PassThrough();
+    this.videoUrl = `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${video.file_path}`;
+    this.isStick = isStick;
   }
 };

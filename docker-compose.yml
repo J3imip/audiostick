@@ -8,10 +8,10 @@ services:
       dockerfile: Dockerfile.${SERVER}
     depends_on:
       - db
-      - api
+      # - api
     volumes:
     - .:/audiostick
-    - api:/var/lib/telegram-bot-api
+    # - api:/var/lib/telegram-bot-api
 
   db:
     container_name: ${DB_HOST}
@@ -26,19 +26,19 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=${DB_NAME}
 
-  api:
-    container_name: ${API_HOST}
-    image: aiogram/telegram-bot-api:latest
-    environment:
-      - TELEGRAM_API_ID=${API_ID}
-      - TELEGRAM_API_HASH=${API_HASH}
-      - TELEGRAM_LOCAL=1
-    volumes:
-      - api:/var/lib/telegram-bot-api
-    ports:
-      - 8081:8081
+  # api:
+  #   container_name: ${API_HOST}
+  #   image: aiogram/telegram-bot-api:latest
+  #   environment:
+  #     - TELEGRAM_API_ID=${API_ID}
+  #     - TELEGRAM_API_HASH=${API_HASH}
+  #     - TELEGRAM_LOCAL=1
+  #   volumes:
+  #     - api:/var/lib/telegram-bot-api
+  #   ports:
+  #     - 8081:8081
 
 
 volumes: 
-  api: {}
+  # api: {}
   data: {}

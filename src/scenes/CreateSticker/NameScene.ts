@@ -22,5 +22,5 @@ CreateNameScene.on(message("text"), async(ctx: CreateStickerContext) => {
 CreateNameScene.on("callback_query", async(ctx: CreateStickerContext) => {
   await ctx.answerCbQuery();
   ctx.scene.state.sign = ctx.callbackQuery["data"] == "yes" ? true : false;
-  await ctx.scene.enter("CreateAuthor", ctx.scene.state);
+  await ctx.scene.enter("CreateStick", ctx.scene.state);
 });

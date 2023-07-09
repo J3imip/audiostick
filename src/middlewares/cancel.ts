@@ -6,7 +6,7 @@ export const cancel = () => async(ctx, next: Function) => {
     }
 
     return next();
-  } catch {
+  } catch(err) {
     return next();
   }
 }
