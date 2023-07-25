@@ -9,8 +9,8 @@ services:
     depends_on:
       - db
       # - api
-    volumes:
-    - .:/audiostick
+    # volumes:
+    # - .:/audiostick
     # - api:/var/lib/telegram-bot-api
 
   db:

@@ -11,7 +11,7 @@ interface CreateSession extends Scenes.SceneSession {
 
 export interface EditStickerContext extends Context {
 	session: CreateSession;
-	scene: Scenes.SceneContextScene<CreateStickerContext, Scenes.SceneSessionData> & {
+	scene: Scenes.SceneContextScene<EditStickerContext, Scenes.SceneSessionData> & {
     state: {
       video: Video;
       type: StickerType;

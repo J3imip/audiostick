@@ -60,11 +60,9 @@ bot.use(admin.composer);
 bot.use(user.composer);
 bot.use(group.composer);
 
-if(process.env.SERVER === "dev") {
-  bot.launch({
-    dropPendingUpdates: true
-  });
-}
+bot.launch({
+  dropPendingUpdates: true
+});
 
 //enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));

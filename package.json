@@ -6,7 +6,8 @@
   },
   "scripts": {
     "start:dev": "nodemon ./src/index.ts",
-    "start:prod": "node ./dist/index.js"
+    "start:prod": "node ./dist/index.js",
+    "build": "rm ./dist -rf && tsc"
   },
   "dependencies": {
     "@telegraf/session": "^2.0.0-beta.6",
