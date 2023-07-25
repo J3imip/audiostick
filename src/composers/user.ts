@@ -72,7 +72,7 @@ composer.on("chosen_inline_result", async(ctx: CustomSession) => {
       await user.save();
     }
   }
-  if(ctx.session.user.role == "admin") {
-    await ctx.scene.enter("EditSticker");
-  }
+  // if(ctx.session.user.role == "admin") {
+  //   await ctx.scene.enter("EditSticker");
+  // }
 });
