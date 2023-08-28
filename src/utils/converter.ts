@@ -64,9 +64,9 @@ export class Video {
   public async toVoice(): Promise<PassThrough> {
     return new Promise(async(resolve, reject) => {
       ffmpeg(this.videoUrl) 
-        .audioCodec(this.isStick ? "libopus" : "libvorbis")
+        .audioCodec(this.isStick ? "libopus" : "libmp3lame")
         .audioBitrate("32")
-        .toFormat("ogg")
+        .toFormat(this.isStick ? "ogg" : "mp3")
         .size('0x0')
         .noVideo()
         .on('end', () => resolve(this.videoOrVoicePt))
